@@ -1,4 +1,5 @@
 object Mar2Variables extends App{
-  println("Explore variablest")
+  println("Explore variables")
+//test - comments pushing on Git
 
 }
