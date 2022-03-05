@@ -34,6 +34,7 @@ val a = 200
   println(myPi, ancientPi)
 
   val myStringy = "34343434"
+
   val myNumber = myStringy.toInt
   println(myStringy, myNumber) //after printing those values looks the same, but difference is
   //that we can do Math with Int an String operations with String
