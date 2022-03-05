@@ -1,5 +1,6 @@
 object TypeCasting03mar extends App{
-val a = 200
+
+  val a = 200
   val b = a.toByte //byte is not assigned and can hold only 256 different values
   println(a,b)
  // println(b.toInt) //by pressing dot(.) we can get a list what we can do with object
@@ -38,7 +39,5 @@ val a = 200
   val myNumber = myStringy.toInt
   println(myStringy, myNumber) //after printing those values looks the same, but difference is
   //that we can do Math with Int an String operations with String
-
-
 
 }
