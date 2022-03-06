@@ -13,13 +13,14 @@ object AgeCalculator extends App {
   println(s"Nice, your name is $yourName, isn't it?")
 
 
-  val yearsCount = readLine("How old are you?")
+  val yearsCount  = readLine("How old are you?")
   println(s"Cool you are $yearsCount old.")
 
-  //val hundredYearsOldYear = year.toInt + 100 - yearsCount.toInt
-
+  val yearsToHundred = 100 - yearsCount.toInt
+  //println(yearsToHundred)
+  val hundredYearsOld = year + yearsToHundred
 
   //val total = yearsCount.toDouble * cost //converted String to Double to get Double * Double
   //val rounded = Math.round(total * 100) / 100.00 //Old trick to round and have 2 digits of percision
-  //println(s"You will get 100 years old in $hundredYearsOldYear .")
+ println(s"You will get 100 years old in $hundredYearsOld .")
 }
