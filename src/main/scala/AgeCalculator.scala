@@ -21,11 +21,12 @@ object AgeCalculator extends App {
  println(s"You will get 100 years old in $hundredYearsOld .")
 */
   //teachers example
+  val targetAge = 100
   val myName = readLine("What is youur name?")
   println(s"Hi $myName !")
   val myAge = readLine("How old are you?").toDouble
   val year1 = Year.now.getValue
   val whenHundred = year1 - myAge + 100
   val rounded = Math.round(whenHundred)
-  println(s"Cool Yoll be 100 in $rounded")
+  println(s"Cool Yoll be $targetAge in $rounded")
 }
