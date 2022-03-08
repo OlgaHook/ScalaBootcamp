@@ -9,15 +9,18 @@ object Day4ExercBonuss extends App{
   //Calculate Xmas bonus if they have worked at least 2  years otherwise print sorry no bonus
   //Bonus is years worked over 2 years * 15% of monthly wage
   //so 5 years worked, 1000 Euros wage would give 450 Euro bonus (3 years * 150)
+  val yearsBeforeBonus = 2
+  val bonusPercentage = 0.15
 
   val personName = readLine("What is your name ?")
   println(s"Hello $personName !")
-  val workExperience = readLine("How long do you worked at the firm?").toDouble
+  val workExperience = readLine("How long do you worked at the firm?").toInt
   println(s"Nice $workExperience years is pretty impressive experience")
-  val wage = readLine("What is your monthly wage ?")
+  val wage = readLine("What is your monthly wage ?").toDouble
   if (workExperience < 5 ){
     println(s"You working less than 5 years, so sorry - bo bonus .")}else{
-println(s"You earned a bonus - 450 eur")
+    val bonus = (workExperience - yearsBeforeBonus) * (wage*bonusPercentage)
+   println(s"You earned a bonus  $bonus eur")
   }
 
 }
