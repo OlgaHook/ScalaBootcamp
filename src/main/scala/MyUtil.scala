@@ -15,5 +15,19 @@ object MyUtil {
     //    n.round //only 0 precision
     (n*multiplier).round/multiplier //we utilize the built in round
   }
+  /**
+   * Utility function to find delta from starting and stop time
+   * @param t0 - starting time
+   * @param t1 - stop time
+   * @return delta in milliseconds
+   */
+  def deltaMs(t0:Long, t1:Long, precision:Int = 3):Double = {
+    myRound((t1-t0)/1_000_000.0, precision) //by default it will be 3
+  }
+
+  def printDeltaMs(t0:Long, t1:Long, taskName:String="", precision:Int = 3):Unit = {
+    val ms = deltaMs(t0, t1, precision = precision)
+    println(s"It took $ms milliseconds to run the task: $taskName")
+  }
 
 }
