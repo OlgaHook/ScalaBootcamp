@@ -1,4 +1,4 @@
-import Splitting.{greeting, words}
+import Day8StringSplitting.{greeting, words}
 
 import scala.io.StdIn.readLine
 

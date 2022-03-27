@@ -1,4 +1,4 @@
-object ForGuards extends App {
+object Day5ForGuards extends App {
 
   println("For Loops with Guards")
   //some more info here: https://alvinalexander.com/scala/scala-for-loop-examples-syntax-yield-foreach/

@@ -1,4 +1,4 @@
-object TypeCasting03mar extends App{
+object Day3Typecasting extends App{
    val a = 200
    val b = a.toByte //byte is not assigned and can hold only 256 different values
    println(a,b)

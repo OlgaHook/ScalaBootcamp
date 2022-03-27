@@ -1,4 +1,4 @@
-object FizzBuzzClasswork extends App {
+object Day5ForLoops extends App {
 
   //for numbers 1 to 100 (included!)
   //print FizzBuzz if number divides evenly by both 5 and 7

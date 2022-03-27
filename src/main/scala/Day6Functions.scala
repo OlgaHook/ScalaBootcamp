@@ -1,6 +1,6 @@
 import MyUtil.myRound
 
-object Functions extends App {
+object Day6Functions extends App {
   object Day6Functions extends App {
     println("Let's go eat something!")
 

@@ -1,6 +1,6 @@
 import scala.io.StdIn.readLine
 
-object SequencesCubesExcercise extends App {
+object Day8SequencesCubesExcercise extends App {
 
 
     //  val startingNumber = readLine("Enter the starting number, please \n").toInt

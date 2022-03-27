@@ -1,4 +1,4 @@
-object String extends App {
+object Day7String extends App {
   println("Let's have some string fun! \uD83D\uDE01")  //the smiley is encoded Unicode from https://unicode.org/emoji/charts/full-emoji-list.html
 
   //  val food = "kartupelis" // potato in Latvian

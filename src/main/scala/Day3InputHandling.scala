@@ -1,6 +1,6 @@
 import scala.io.StdIn.readLine
 
-object ImputHandling extends App {
+object Day3InputHandling extends App {
 
   val myName = readLine("What is your name friend?") //func imported
   println(s"Cool, your name is $myName, isn't it?")

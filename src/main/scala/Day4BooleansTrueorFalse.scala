@@ -1,4 +1,4 @@
-object TrueorFalse extends App {
+object Day4BooleansTrueorFalse extends App {
 
   println("Hello Booleans 🤣!")
 

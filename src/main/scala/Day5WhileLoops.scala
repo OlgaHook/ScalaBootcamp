@@ -1,4 +1,4 @@
-object WhileLoops extends App {
+object Day5WhileLoops extends App {
 
   println("Alice did")
   println("talk")

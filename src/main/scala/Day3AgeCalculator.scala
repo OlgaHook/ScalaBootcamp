@@ -1,7 +1,7 @@
 import java.time.Year
 import scala.io.StdIn.readLine
 
-object AgeCalculator extends App {
+object Day3AgeCalculator extends App {
 //greet the person with their name
   // Calculate when they will be 100 years old and print it out
   //val year = 2022 //This would be ok

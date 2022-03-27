@@ -1,6 +1,6 @@
 import scala.util.Random
 
-object Splitting extends App {
+object Day8StringSplitting extends App {
 
   println("Let's split some strings!")
   val greeting = "Welcome to Riga which is a port city. Klaipeda is also a port city."

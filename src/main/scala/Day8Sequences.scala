@@ -1,4 +1,4 @@
-object Sequences extends App{
+object Day8Sequences extends App{
   println("Need for sequences")
   //  val a1=3
   //  val a2=8

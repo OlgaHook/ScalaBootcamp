@@ -1,6 +1,6 @@
 import scala.io.StdIn.readLine
 
-object FuncionsCityPopulation extends App {
+object Day6FuncCityPopulation extends App {
   object Day6CityPopulation extends App {
     //easy function
     //TODO write a function (name it yourself) to calculate Farenheit from Celsius
