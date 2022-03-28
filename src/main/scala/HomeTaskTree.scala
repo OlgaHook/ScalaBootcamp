@@ -1,4 +1,5 @@
 import Day7String.food
+import HomeTaskTree.name
 
 import scala.io.StdIn.readLine
 
@@ -11,7 +12,7 @@ println(s"Nice to meet you $name!")
   val treeHight = readLine("Please, enter any tree height: \n").toInt
 
   //TODO print a xmas tree (or another tree) by calling printTree function with the correct parameters
-  printTree1(name, treeHight)
+// printTree1(name, treeHight)
 
   def printTree1(name:String, height:Int):Unit = {
     var emptySpace = 1
@@ -27,9 +28,9 @@ for (n <- 1 to treeHight){
   }
 println()
 }
-
-
   }
+  printTree1(name, treeHight) //can call function before or after DEF
+
   //tree height should be the one assigned
   //simple version for height 3 would be
   //  *
