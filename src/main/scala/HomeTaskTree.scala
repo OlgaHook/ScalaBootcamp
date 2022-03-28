@@ -14,15 +14,15 @@ println(s"Nice to meet you $name!")
   printTree1(name, treeHight)
 
   def printTree1(name:String, height:Int):Unit = {
-    var i = 1
-    var j = 1
+    var emptySpace = 1
+    var starSymbol = 1
 for (n <- 1 to treeHight){
-  i = treeHight - n
-  j = n*2 - 1
-  for (o <-1 to i){
+  emptySpace = treeHight - n
+  starSymbol = n*2 - 1
+  for (o <-1 to emptySpace){
     print(" ")
   }
-  for (p <-1 to j){
+  for (p <-1 to starSymbol){
     print("*")
   }
   println()
