@@ -1,20 +1,45 @@
+import Day7String.food
+
 import scala.io.StdIn.readLine
 
 object HomeTaskTree extends App{
+
   //TODO ask person's name
   val name = readLine("Hi! What is your name?\n")
 println(s"Nice to meet you $name!")
-
   //TODO ask for tree height
-  val treeHight = readLine("Please, enter any tree height: \n")
+  val treeHight = readLine("Please, enter any tree height: \n").toInt
 
   //TODO print a xmas tree (or another tree) by calling printTree function with the correct parameters
+  printTree1(name, treeHight)
+
+  def printTree1(name:String, height:Int):Unit = {
+    var i = 1
+    var j = 1
+for (n <- 1 to treeHight){
+  i = treeHight - n
+  j = n*2 - 1
+  for (o <-1 to i){
+    print(" ")
+  }
+  for (p <-1 to j){
+    print("*")
+  }
+  println()
+  //println(("*")*n)
+  //println(("*")*(n*2-1))
+}
+
+
+  }
+
   //tree height should be the one assigned
   //simple version for height 3 would be
   //  *
   // ***
   //*****
-  def printTree(name:String, height:Int, symbol:Char='*', maximumHeight:Int=40):Unit = {
+
+ def printTree(name:String, height:Int, symbol:Char='*', maximumHeight:Int=40):Unit = {
     //for this exercise we are not going to adjust maximumHeight
     //TODO print the tree HINT: check the last entry in Day7Strings
   }
