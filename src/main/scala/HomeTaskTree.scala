@@ -25,14 +25,11 @@ for (n <- 1 to treeHight){
   for (p <-1 to starSymbol){
     print("*")
   }
-  println()
-  //println(("*")*n)
-  //println(("*")*(n*2-1))
+println()
 }
 
 
   }
-
   //tree height should be the one assigned
   //simple version for height 3 would be
   //  *
