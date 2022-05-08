@@ -1,12 +1,6 @@
 package com.github.OlgaHook
 
 
-
-import com.github.OlgaHook.Day17ReadingSolution.filePath
-import com.github.OlgaHook.Day17ReadingTextFile.{maxLines, relativeFilePath}
-import com.github.OlgaHook.Day18ReadingWebPages.url
-import com.github.OlgaHook.MyUtil.getLinesFromFile
-
 import java.io.FileWriter
 import scala.io.Source
 
@@ -34,16 +28,18 @@ import scala.io.Source
 // bonus - add timestamp in file name
 // something like this Doyle_Adventures_2022_4_16_15_06.txt
 // https://stackoverflow.com/questions/48378006/how-to-get-current-timestamp-in-scala-as-a-string-without-spaces
-class ExerciseClass(title: String = "", author: String= "", url:String = "",rows:Array[String] = Array[String]())
+class ExerciseClass(title: String = "", author: String= "", url:String = "", rows:Array[String] = Array[String]())
 {
   val rowCount:Int = rows.length
   val wordCount:Int = MyUtil.getWordCountPerLine(rows).sum
 
-  def saveText(dstPath: String,text: String, append:Boolean=false, verbose:Boolean=false):Unit = {
-    if (verbose) println(s"Saving ${text.length} characters to $dstPath")
+  val localText = rows.mkString
+
+  def saveText(dstPath: String, append:Boolean=false, verbose:Boolean=false):Unit = {
+    if (verbose) println(s"Saving ${localText.length} characters to $dstPath")
     val fw = new FileWriter(dstPath, append)
     if (append) fw.write("\n")
-    fw.write(text)
+    fw.write(localText)
     fw.close()
   }
 }
@@ -68,7 +64,7 @@ object Day19DocumentReadingExercise extends App {
   if (FilePath == "") {
     FilePath = "src/resources/webPages.txt"
   }
-  println("Opening file:")
+  print("Opening file: ")
   println(FilePath)
 
   //opening file into myLines array
@@ -77,41 +73,65 @@ object Day19DocumentReadingExercise extends App {
   val myLines = bufferedSource.getLines().toArray
   bufferedSource.close()
 
-  //prints each line found in the TXT file
+
+  // here I analize each individual line found in the file
+  // and determine the filename under which I will save the ebook
+
+  // 1 URL --> 1 ebook
 
   var currentLine = ""
   var fileName = ""
+  var fileNameFull = ""
   var currCharString = ""
   var currentChar: Char =_
-  var startPos: Int = 0
-  var endPos: Int = 0
+  var startPos: Int = 0 //start position
+  var endPos: Int = 0 //end position
 
   for( currentLine<-myLines ) {
+    // new line from the TXT file with URLs
+    // currentLine is URL string
+
 //    println(currentLine)
 //    val myText = new ExerciseClass()
+
+    //I determine the file name from URL
     fileName = ""
+
     for( i <- 0 to currentLine.length()-1 ) {
       currentChar = currentLine.charAt(i)
       currCharString = currentChar.toString
-      print(currentChar)
       if ( currCharString == "/") {
         startPos = i
       }
       if ( currCharString == ".") {
         endPos = i
       }
-
     }
 
     for ( i <- startPos+1 to endPos-1 ) {
       fileName = fileName + currentLine.charAt(i)
     }
-    println()
-//    println(startPos)
-//    println(endPos)
+
+    fileName = fileName + ".txt"
+    fileNameFull = "src/resources/" + fileName
+
+    //file name is now determined
+
+    print("Saving ")
+    print(currentLine)
+    print(" under filename: ")
     println(fileName)
+
+
+    //fetch text from the Internet based on URL
     val text = MyUtil.getTextFromWeb(currentLine) //we make a get request on the web resource
-//    println(text.take(80))
+    val content = Array( text )                   //we make it compatible with ExerciseClass parameter Array
+
+    //we create an instance of ExerciseClass
+    val result = new ExerciseClass(fileName, "Olga", currentLine, content )
+    //and save it into the location specified in the fileNameFull by calling method saveText()
+    result.saveText(fileNameFull)
+
   }
 
 
