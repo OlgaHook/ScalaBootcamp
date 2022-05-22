@@ -1,12 +1,8 @@
 package com.github.OlgaHook
 
-import com.github.OlgaHook.TicTacToeExcercise.{cpuWon, playerWon}
 
-import java.nio.file.{Files, Paths}
 import java.sql.{DriverManager, PreparedStatement}
-import java.time.format.DateTimeFormatter
-import java.time.{ZoneOffset, ZonedDateTime}
-import java.util.Calendar
+
 
 class TicTacToeClass (val dbPath: String){
   val url =  s"jdbc:sqlite:$dbPath"

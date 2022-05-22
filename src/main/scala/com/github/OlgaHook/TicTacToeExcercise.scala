@@ -123,7 +123,6 @@ class TicTacDB(val dbPath: String) {
   def insertResult(human:Boolean, cpu:Boolean, draw:Boolean):Unit = {
     //    //we want to avoid inserting unprepared values
     //    //https://xkcd.com/327/
-    //
     //    //https://alvinalexander.com/source-code/scala-jdbc-sql-select-insert-statement-resultset-preparedstatement-example/
     //
     var humanInt:Int = 0
@@ -176,7 +175,7 @@ class TicTacDB(val dbPath: String) {
 object TicTacToeExcercise extends App {
 
   val game = new TicTacBoard()
-
+  val gameDB = new TicTacDB("src/resources/tictac/tictactoe.db")
   var randomWorked: Boolean = false
   var playerWorked: Boolean = false
   var column: Int = 0
@@ -301,7 +300,7 @@ object TicTacToeExcercise extends App {
     println("A draw - desk is full!")
   }
 
-  val gameDB = new TicTacDB("src/resources/tictac/tictactoe.db")
+
 
   gameDB.migrate()
   gameDB.insertResult(playerWon, cpuWon, nobodyWon)
