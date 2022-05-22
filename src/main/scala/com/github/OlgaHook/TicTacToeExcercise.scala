@@ -2,8 +2,12 @@ package com.github.OlgaHook
 
 //import com.github.OlgaHook.TicTacToeExcercise.allowedChars
 
+import java.sql.DriverManager
+import java.sql.PreparedStatement
+import scala.collection.mutable.ArrayBuffer
 import scala.io.StdIn.readLine
 import scala.util.Random
+
 
 class TicTacBoard() {
   // internal variables of the class
@@ -91,156 +95,226 @@ class TicTacBoard() {
 
 }
 
+class TicTacDB(val dbPath: String) {
+
+  val url =  s"jdbc:sqlite:$dbPath"
+  val conn = DriverManager.getConnection(url)
+
+  def migrate():Unit = {
+
+    val statement = conn.createStatement() //we create a statement object that will handl sending SQL statements to the DB
+
+    //this query should do nothing if table already exists
+    val sql0 =
+    """
+      |CREATE TABLE IF NOT EXISTS results (
+      |id INTEGER PRIMARY KEY,
+      |human INTEGER NOT NULL,
+      |cpu INTEGER NOT NULL,
+      |draw INTEGER NOT NULL,
+      |created TEXT
+      |);
+      |""".stripMargin
+
+    statement.addBatch(sql0)
+    statement.executeBatch()
+  }
+
+  def insertResult(human:Boolean, cpu:Boolean, draw:Boolean):Unit = {
+    //    //we want to avoid inserting unprepared values
+    //    //https://xkcd.com/327/
+    //
+    //    //https://alvinalexander.com/source-code/scala-jdbc-sql-select-insert-statement-resultset-preparedstatement-example/
+    //
+    var humanInt:Int = 0
+    var cpuInt:Int = 0
+    var drawInt:Int = 0
+
+    if ( human == true ) { humanInt = 1 }
+    if ( cpu == true ) { cpuInt = 1 }
+    if ( draw == true ) { drawInt = 1 }
+
+    val insertSql = """
+                      |INSERT INTO results (human,cpu,draw,created)
+                      |values (?,?,?,CURRENT_TIMESTAMP)
+                    """.stripMargin
+//    //    //CURRENT_TIMESTAMP is in SQL standard: https://stackoverflow.com/questions/15473325/inserting-current-date-and-time-in-sqlite-database
+//
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+
+    preparedStmt.setInt (1, humanInt)
+    preparedStmt.setInt (2, cpuInt)
+    preparedStmt.setInt (3, drawInt)
+    preparedStmt.execute
+
+    preparedStmt.close()
+  }
+
+  def getStatistics():Array[Int] = {
+    val sql =
+      """
+        |SELECT SUM(human) human, SUM(cpu) cpu, SUM(draw) draw FROM results
+        |;
+        |""".stripMargin
+
+    val resultBuffer = ArrayBuffer[Int]() //so we start with an empty buffer to store our rows
+    val statement = conn.createStatement()
+    val rs = statement.executeQuery(sql)
+    while (rs.next()) {
+      val human = rs.getInt("human")
+      resultBuffer += human
+      val cpu = rs.getInt("cpu")
+      resultBuffer += cpu
+      val draw = rs.getInt("draw")
+      resultBuffer += draw
+    }
+    resultBuffer.toArray //better to return immutable values
+  }
+}
+
 
 object TicTacToeExcercise extends App {
- // val saveDst = "src/resources/tictac/score.csv"
- // val db = new TicTacToeClass("src/resources/tictac/tictactest.db")
 
+  val game = new TicTacBoard()
 
+  var randomWorked: Boolean = false
+  var playerWorked: Boolean = false
+  var column: Int = 0
+  var line: Int = 0
+  var cpuChar: Char =_ //allowedChars.charAt(2)
+  var playerChar: Char =_ //allowedChars.charAt(1)
+  var noChar: Char =_ //allowedChars.charAt(0)
+  var cpuWon: Boolean = false
+  var playerWon: Boolean = false
+  var nobodyWon: Boolean = false
 
-//  //TODO create a new object holding all the information necessary for a game nim from this class Nim
-//  val nimGame = new Nim(playerA, playerB, startingCount, gameEndCondition, minMove, maxMove, isPlayerAStarting)
-//
-//  //TODO implement PvP - player versus player - computer only checks the rules
-    val game = new TicTacBoard()
-
-    var randomWorked: Boolean = false
-    var playerWorked: Boolean = false
-    var column: Int = 0
-    var line: Int = 0
-    var cpuChar: Char =_ //allowedChars.charAt(2)
-    var playerChar: Char =_ //allowedChars.charAt(1)
-    var noChar: Char =_ //allowedChars.charAt(0)
-    var cpuWon: Boolean = false
-    var playerWon: Boolean = false
-    var nobodyWon: Boolean = false
-
-    cpuChar = game.allowedChars.charAt(2)
-    playerChar = game.allowedChars.charAt(1)
-    noChar = game.allowedChars.charAt(0)
+  cpuChar = game.allowedChars.charAt(2)
+  playerChar = game.allowedChars.charAt(1)
+  noChar = game.allowedChars.charAt(0)
 
   //  //main loop: while there are no win conditions detected - play on
-    println("starting game")
-    while (game.isGameActive) {
+  println("starting game")
+  while (game.isGameActive) {
 
-      //      clscr
-      //      print("\u001b[2J")ww
-      //      print("\u001b[2J\u001b[;H")
-      // *******************************************
-      //                  CPU part
-      // *******************************************
-      val random = new Random
-      val possibleRepliesOfComputer = Seq("A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3")
+    //      clscr
+    //      print("\u001b[2J")ww
+    //      print("\u001b[2J\u001b[;H")
+    // *******************************************
+    //                  CPU part
+    // *******************************************
+    val random = new Random
+    val possibleRepliesOfComputer = Seq("A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3")
 
-      // CPU move - it will try to randomly pick any tic tac board cell
-      // if it is already occupied - it will repeat until the cell is found
-      // so therefore we randomly pick inside a while loop
-      randomWorked = false
-      while (randomWorked == false) {
+    // CPU move - it will try to randomly pick any tic tac board cell
+    // if it is already occupied - it will repeat until the cell is found
+    // so therefore we randomly pick inside a while loop
+    randomWorked = false
+    while (randomWorked == false) {
 
-        val reply = possibleRepliesOfComputer(
-          random.nextInt(possibleRepliesOfComputer.length)
-        )
+      val reply = possibleRepliesOfComputer(
+        random.nextInt(possibleRepliesOfComputer.length)
+      )
 
-        column = game.getColumnFromMove(reply)
-        line = game.getLineFromMove(reply)
+      column = game.getColumnFromMove(reply)
+      line = game.getLineFromMove(reply)
 
-        if (game.myMultiArr(line)(column) == noChar) {
-          randomWorked = true
-          game.myMultiArr(line)(column) = cpuChar
-          println(s"Computer Move: $reply")
-        }
+      if (game.myMultiArr(line)(column) == noChar) {
+        randomWorked = true
+        game.myMultiArr(line)(column) = cpuChar
+        println(s"Computer Move: $reply")
       }
+    }
 
-      // analysis of CPU move
-      cpuWon = game.checkWinner(cpuChar)
-      if (cpuWon == false) {
-        game.checkIfFull(noChar)
-      }
+    // analysis of CPU move
+    cpuWon = game.checkWinner(cpuChar)
+    if (cpuWon == false) {
+      game.checkIfFull(noChar)
+    }
 
-      // *******************************************
-      //              visualisation
-      // *******************************************
+    // *******************************************
+    //              visualisation
+    // *******************************************
 
-      println("  A B C")
-      val firstLine = "1:" + game.myMultiArr(0)(0) + " " + game.myMultiArr(0)(1) + " " + game.myMultiArr(0)(2)
-      val secndLine = "2:" + game.myMultiArr(1)(0) + " " + game.myMultiArr(1)(1) + " " + game.myMultiArr(1)(2)
-      val thirdLine = "3:" + game.myMultiArr(2)(0) + " " + game.myMultiArr(2)(1) + " " + game.myMultiArr(2)(2)
-      println(firstLine)
-      println(secndLine)
-      println(thirdLine)
+    println("  A B C")
+    val firstLine = "1:" + game.myMultiArr(0)(0) + " " + game.myMultiArr(0)(1) + " " + game.myMultiArr(0)(2)
+    val secndLine = "2:" + game.myMultiArr(1)(0) + " " + game.myMultiArr(1)(1) + " " + game.myMultiArr(1)(2)
+    val thirdLine = "3:" + game.myMultiArr(2)(0) + " " + game.myMultiArr(2)(1) + " " + game.myMultiArr(2)(2)
+    println(firstLine)
+    println(secndLine)
+    println(thirdLine)
 
-      // *******************************************
-      //            Human Player part
-      // *******************************************
-      // note: human part is executed only if the CPU has not yet won or the desk is not full!
-      if ((cpuWon == false) & (nobodyWon == false)) {
-        playerWorked = false
-        while (playerWorked == false) {
-          val currentMove = readLine("Your move (enter XX to quit): ")
+    // *******************************************
+    //            Human Player part
+    // *******************************************
+    // note: human part is executed only if the CPU has not yet won or the desk is not full!
+    if ((cpuWon == false) & (nobodyWon == false)) {
+      playerWorked = false
+      while (playerWorked == false) {
+        val currentMove = readLine("Your move (enter XX to quit): ")
 
-          if (currentMove != "") {
-            //
-            if (currentMove != "XX") {
-              column = game.getColumnFromMove(currentMove)
-              line = game.getLineFromMove(currentMove)
+        if (currentMove != "") {
+          //
+          if (currentMove != "XX") {
+            column = game.getColumnFromMove(currentMove)
+            line = game.getLineFromMove(currentMove)
 
-              if ((column != 777) & (line != 777)) {
-                if (game.myMultiArr(line)(column) != noChar) {
-                  println("The cell is already occupied!")
-                }
-                else {
-                  game.myMultiArr(line)(column) = playerChar
-                  playerWorked = true
-                }
+            if ((column != 777) & (line != 777)) {
+              if (game.myMultiArr(line)(column) != noChar) {
+                println("The cell is already occupied!")
               }
               else {
-                println("Illegal value!")
+                game.myMultiArr(line)(column) = playerChar
+                playerWorked = true
               }
             }
             else {
-              println("Game session closed by Player")
-              cpuWon = true
-              game.isGameActive = false
-              playerWorked = true
+              println("Illegal value!")
             }
           }
           else {
-            println("Empty value entered!")
+            println("Game session closed by Player")
+            cpuWon = true
+            game.isGameActive = false
+            playerWorked = true
           }
         }
-
-        // analysis of Player move
-        playerWon = game.checkWinner(playerChar)
-        if (playerWon == false) {
-          nobodyWon = game.checkIfFull(noChar)
+        else {
+          println("Empty value entered!")
         }
       }
-    }
 
-    if (playerWon) {
-      println("You won!")
+      // analysis of Player move
+      playerWon = game.checkWinner(playerChar)
+      if (playerWon == false) {
+        nobodyWon = game.checkIfFull(noChar)
+      }
     }
-    if (cpuWon) {
-      println("CPU won!")
-    }
-    if (nobodyWon) {
-      println("A draw - desk is full!")
-    }
+  }
 
-//
-//  //  val winner = if (isPlayerATurn) playerA else playerB
-//  //  val loser = if (!isPlayerATurn) playerA else playerB
-//  //  println(s"Game ended. Congratulations $winner! Better luck next time $loser.")
-//  nimGame.showStatus()
-//  nimGame.printMoves()
-//
-//  //  Day27Persistence.saveGameResult(saveDst, nimGame.getWinner(), nimGame.getLoser())
-//  nimGame.saveGameResult(saveDst)
-//  db.insertResult(nimGame.getWinner, nimGame.getLoser)
-//  nimGame.saveGameScore()
-//  db.insertFullScore(nimGame.getMoves)
-//  db.printTopPlayers()
-//  //print game status again
+  if (playerWon) {
+    println("You won!")
+  }
+  if (cpuWon) {
+    println("CPU won!")
+  }
+  if (nobodyWon) {
+    println("A draw - desk is full!")
+  }
+
+  val gameDB = new TicTacDB("src/resources/tictac/tictactoe.db")
+
+  gameDB.migrate()
+  gameDB.insertResult(playerWon, cpuWon, nobodyWon)
+  val statsArray = gameDB.getStatistics()
+  val totalPlayerWins = statsArray(0)
+  val totalCPUWins = statsArray(1)
+  val totalNoWins = statsArray(2)
+
+  println()
+  println("Total statistics:")
+
+  println(s"Player won: $totalPlayerWins")
+  println(s"CPU won: $totalCPUWins")
+  println(s"Draws: $totalNoWins")
 
 }
